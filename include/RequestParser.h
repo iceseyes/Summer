@@ -31,7 +31,7 @@ public:
 			InputIterator begin, InputIterator end) {
 
 		request_grammar<InputIterator> g;
-		bool result = qi::parse(begin, end, g) && begin!=end;
+		bool result = qi::parse(begin, end, g) && begin==end;
 		logger::http.debugStream() << "Parsing request => " << result;
 
 		return boost::make_tuple(result, begin);
