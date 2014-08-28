@@ -6,13 +6,14 @@
 #ifndef SUMMER_HTTP_REQUEST_HPP
 #define SUMMER_HTTP_REQUEST_HPP
 
+#include <summer/http/Header.h>
+#include <summer/net/URI.h>
+
 #include <string>
 #include <vector>
-#include "Header.h"
-#include <net/URI.h>
 #include <algorithm>
 
-namespace summer { namespace server { namespace http {
+namespace summer { namespace http {
 
 struct Request {
 	typedef std::vector<Header>	Headers;
@@ -29,6 +30,6 @@ struct Request {
 	std::string operator[](const std::string &header) const;
 };
 
-}}}
+}}
 
-#endif // HTTP_SERVER3_REQUEST_HPP
+#endif // SUMMER_HTTP_REQUEST_HPP

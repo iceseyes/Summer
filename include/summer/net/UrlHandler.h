@@ -8,7 +8,7 @@
 #ifndef URLVALIDATOR_H_
 #define URLVALIDATOR_H_
 
-#include <Exceptions.h>
+#include <summer/Exceptions.h>
 
 namespace summer { namespace net {
 

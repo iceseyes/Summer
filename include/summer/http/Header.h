@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace summer { namespace server { namespace http {
+namespace summer { namespace http {
 
 struct Header {
   std::string name;
@@ -16,6 +16,6 @@ struct Header {
   bool operator==(const std::string &name) const { return this->name == name; }
 };
 
-}}}
+}}
 
 #endif

@@ -6,12 +6,14 @@
 #ifndef SUMMER_HTTP_REPLY_H
 #define SUMMER_HTTP_REPLY_H
 
+#include <summer/http/Header.h>
+
+#include <boost/asio.hpp>
+
 #include <string>
 #include <vector>
-#include <boost/asio.hpp>
-#include "Header.h"
 
-namespace summer { namespace server { namespace http {
+namespace summer { namespace http {
 
 struct Reply {
   enum status_type {
@@ -40,6 +42,6 @@ struct Reply {
   static Reply stock_reply(status_type status);
 };
 
-}}}
+}}
 
-#endif // HTTP_SERVER3_REPLY_HPP
+#endif // SUMMER_HTTP_REPLY_H

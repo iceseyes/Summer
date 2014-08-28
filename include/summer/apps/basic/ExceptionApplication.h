@@ -8,9 +8,9 @@
 #ifndef EXCEPTIONAPPLICATION_H_
 #define EXCEPTIONAPPLICATION_H_
 
-#include <Application.h>
+#include <summer/apps/Application.h>
 
-namespace summer { namespace basic_apps {
+namespace summer { namespace apps { namespace basic {
 
 struct ExceptionApplication : public Application {
 	std::string message;
@@ -24,7 +24,7 @@ struct ExceptionApplication : public Application {
 	}
 };
 
-}}
+}}}
 
 
 

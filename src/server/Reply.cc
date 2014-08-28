@@ -3,11 +3,13 @@
 // ~~~~~~~~~
 //
 
-#include <Reply.h>
-#include <string>
+#include <summer/http/Reply.h>
+
 #include <boost/lexical_cast.hpp>
 
-namespace summer { namespace server { namespace http {
+#include <string>
+
+namespace summer { namespace http {
 
 namespace status_strings {
 
@@ -220,4 +222,4 @@ Reply Reply::stock_reply(Reply::status_type status) {
   return rep;
 }
 
-}}}
+}}

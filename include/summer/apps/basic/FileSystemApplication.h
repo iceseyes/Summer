@@ -8,13 +8,16 @@
 #ifndef FILESYSTEMAPPLICATION_H_
 #define FILESYSTEMAPPLICATION_H_
 
-#include <Application.h>
-#include <mime_types.h>
-#include <fstream>
-#include <logger/logger.h>
-#include <net/URL.h>
+#include <summer/logger.h>
+#include <summer/net/URL.h>
+#include <summer/apps/Application.h>
+#include <summer/mime_types.h>
 
-namespace summer { namespace basic_apps {
+#include <boost/lexical_cast.hpp>
+
+#include <fstream>
+
+namespace summer { namespace apps { namespace basic {
 
 template<class ConfigurationPolicy>
 class FileSystemApplication : public Application {
@@ -60,7 +63,7 @@ public:
 		rep.headers[0].name = "Content-Length";
 		rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
 		rep.headers[1].name = "Content-Type";
-		rep.headers[1].value = server::http::mime_types::extension_to_type(extension);
+		rep.headers[1].value = mime_types::extension_to_type(extension);
 
 		logger::http.infoStream() << "FileSystemApplication(): " <<
 				request_path << " accepted! "
@@ -71,8 +74,7 @@ public:
 private:
 	std::string _docRoot;
 };
-}}
 
-
+}}}
 
 #endif /* FILESYSTEMAPPLICATION_H_ */

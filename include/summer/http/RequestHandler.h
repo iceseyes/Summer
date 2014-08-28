@@ -6,20 +6,24 @@
 #ifndef SUMMER_REQUEST_HANDLER_HPP
 #define SUMMER_REQUEST_HANDLER_HPP
 
-#include <string>
-#include <boost/noncopyable.hpp>
-#include <RootDispatcher.h>
-#include <Reply.h>
-#include <logger/logger.h>
-#include <net/URL.h>
-#include <basic_apps/ExceptionApplication.h>
+#include <summer/logger.h>
+#include <summer/http/Reply.h>
+#include <summer/server/RootDispatcher.h>
 
-namespace summer { namespace server { namespace http {
+#include <summer/net/URL.h>
+#include <summer/apps/basic/ExceptionApplication.h>
+
+#include <boost/noncopyable.hpp>
+
+#include <string>
+
+
+namespace summer { namespace http {
 
 /// The common handler for all incoming requests.
 template<
-	class ConfigurationPolicy = conf::Configuration,
-	class _Dispatcher = RootDispatcher<ConfigurationPolicy>
+	class ConfigurationPolicy = server::conf::Configuration,
+	class _Dispatcher = server::RootDispatcher<ConfigurationPolicy, Request>
 > class basic_requesthandler :
 		public _Dispatcher,
 		private boost::noncopyable {
@@ -37,7 +41,7 @@ public:
 			select(req)(req, rep);
 		} catch (std::exception &e) {
 			logger::http.errorStream() << "RequestHandler() Error: " << e.what();
-			basic_apps::ExceptionApplication exApp;
+			apps::basic::ExceptionApplication exApp;
 			exApp.message = e.what();
 			exApp(req, rep);
 		}
@@ -50,6 +54,6 @@ private:
 
 typedef basic_requesthandler<> RequestHandler;
 
-}}}
+}}
 
 #endif

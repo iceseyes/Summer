@@ -5,9 +5,9 @@
  *      Author: Massimo Bianchi (Gestiware srl)
  */
 
-#include <Request.h>
+#include <summer/http/Request.h>
 
-namespace summer { namespace server { namespace http {
+namespace summer { namespace http {
 
 std::string &Request::operator[](const std::string &header) {
 	Headers::iterator iter = std::find(headers.begin(), headers.end(), header);
@@ -29,7 +29,5 @@ std::string Request::operator[](const std::string &header) const {
 	return "";
 }
 
-}}}
-
-
+}}
 

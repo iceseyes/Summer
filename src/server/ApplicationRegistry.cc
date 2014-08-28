@@ -5,11 +5,14 @@
  *      Author: massimo
  */
 
-#include <basic_apps/ApplicationRegistry.h>
-#include <Application.h>
+#include <summer/logger.h>
+
+#include <summer/net/URL.h>
+
+#include <summer/apps/ApplicationRegistry.h>
+#include <summer/apps/Application.h>
+
 #include <boost/format.hpp>
-#include <net/URL.h>
-#include <logger/logger.h>
 
 namespace summer {
 

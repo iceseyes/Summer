@@ -3,9 +3,9 @@
 // ~~~~~~~~~~~~~~
 //
 
-#include <mime_types.h>
+#include <summer/mime_types.h>
 
-namespace summer { namespace server { namespace http { namespace mime_types {
+namespace summer { namespace mime_types {
 
 struct mapping {
 	const char* extension;
@@ -29,4 +29,4 @@ std::string extension_to_type(const std::string& extension) {
 	return "text/plain";
 }
 
-}}}}
+}}

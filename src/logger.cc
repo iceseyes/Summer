@@ -5,12 +5,13 @@
  *      Author: massimo
  */
 
-#include <logger/logger.h>
+#include <summer/logger.h>
 
 #ifdef LOGGER
 
 log4cpp::Category &summer::logger::root = log4cpp::Category::getRoot();
 log4cpp::Category &summer::logger::http = log4cpp::Category::getInstance(std::string("http"));
+log4cpp::Category &summer::logger::server = log4cpp::Category::getInstance(std::string("server"));
 
 #else
 

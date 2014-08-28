@@ -1,20 +1,24 @@
 /**
  * Server.h
  *
+ * The class representing a Summer Server Instance
+ *
  * author: Massimo Bianchi 2014
  */
 #ifndef SUMMER_SERVER_HPP
 #define SUMMER_SERVER_HPP
 
+#include <summer/http/Connection.h>
+#include <summer/http/RequestHandler.h>
+
 #include <boost/asio.hpp>
-#include <string>
-#include <vector>
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/thread/thread.hpp>
-#include <Connection.h>
-#include <RequestHandler.h>
+
+#include <string>
+#include <vector>
+#include <memory>
+#include <thread>
 
 namespace summer { namespace server {
 
@@ -32,7 +36,7 @@ public:
 	typedef ConfigurationPolicy Configuration;
 	typedef RequestHandlerPolicy RequestHandler;
 	typedef ConnectionPolicy<RequestHandler> Connection;
-	typedef boost::shared_ptr<Connection> ConnectionPtr;
+	typedef std::shared_ptr<Connection> ConnectionPtr;
 
 	explicit Server() :
 			_threadPool_size(Configuration::instance().threadPoolSize()),
@@ -63,10 +67,10 @@ public:
 	}
 
 	void run() {
-		std::vector<boost::shared_ptr<boost::thread> > threads;
+		std::vector<std::shared_ptr<std::thread> > threads;
 		for (std::size_t i = 0; i < _threadPool_size; ++i) {
-			boost::shared_ptr<boost::thread> thread(
-					new boost::thread(
+			std::shared_ptr<std::thread> thread(
+					new std::thread(
 						boost::bind(&boost::asio::io_service::run, &_ioService)));
 			threads.push_back(thread);
 		}
@@ -100,4 +104,4 @@ private:
 typedef Server<> StdServer;
 }}
 
-#endif // HTTP_SERVER3_SERVER_HPP
+#endif // SUMMER_SERVER_HPP

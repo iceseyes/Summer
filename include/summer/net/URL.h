@@ -8,11 +8,14 @@
 #ifndef URL_H_
 #define URL_H_
 
-#include <string>
-#include <net/URI.h>
-#include <net/UrlHandler.h>
+#include <summer/logger.h>
+
+#include <summer/net/URI.h>
+#include <summer/net/UrlHandler.h>
+
 #include <boost/algorithm/string.hpp>
-#include <logger/logger.h>
+
+#include <string>
 
 namespace std {
 

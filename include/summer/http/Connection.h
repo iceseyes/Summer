@@ -6,27 +6,29 @@
 #ifndef SUMMER_CONNECTION_HPP
 #define SUMMER_CONNECTION_HPP
 
+#include <summer/logger.h>
+
+#include <summer/http/Reply.h>
+#include <summer/http/Request.h>
+#include <summer/http/RequestHandler.h>
+#include <summer/http/RequestParser.h>
+
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <Reply.h>
-#include <Request.h>
-#include <RequestHandler.h>
-#include <RequestParser.h>
-#include <logger/logger.h>
 
-namespace summer { namespace server { namespace http {
+#include <memory>
+
+namespace summer { namespace http {
 
 template<class RequestHandlerPolicy>
 class Connection :
-		public boost::enable_shared_from_this<Connection<RequestHandlerPolicy> >,
+		public std::enable_shared_from_this<Connection<RequestHandlerPolicy> >,
 		private boost::noncopyable {
 public:
 	typedef RequestHandlerPolicy RequestHandler;
-	typedef boost::enable_shared_from_this<Connection<RequestHandlerPolicy> > enabled_shared;
+	typedef std::enable_shared_from_this<Connection<RequestHandlerPolicy> > enabled_shared;
 	using enabled_shared::shared_from_this;
 
 	explicit Connection(boost::asio::io_service& io_service, RequestHandler& handler) :
@@ -50,7 +52,7 @@ private:
 					"Connection::onRead() Parsing request " <<
 					_buffer.data();
 
-			boost::tribool result;
+			bool result;
 			boost::tie(result, boost::tuples::ignore) = _requestParser(_request,
 					_buffer.data(), _buffer.data() + bytes_transferred);
 
@@ -102,10 +104,9 @@ private:
 	boost::array<char, 8192> _buffer;
 	Request _request;
 	RequestParser _requestParser;
-
 	Reply _reply;
 };
 
-}}}
+}}
 
 #endif

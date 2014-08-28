@@ -8,33 +8,35 @@
 #ifndef REQUESTGRAMMAR_H_
 #define REQUESTGRAMMAR_H_
 
-#include <logger/logger.h>
+#undef PARSING_DEBUG
+
+#include <summer/logger.h>
+#include <summer/http/Request.h>
+#include <summer/Exceptions.h>
 
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_object.hpp>
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/fusion/adapted/struct.hpp>
-#include <Request.h>
-#include <Exceptions.h>
 
 BOOST_FUSION_ADAPT_STRUCT(
-	summer::server::http::Header,
+	summer::http::Header,
 	(std::string, name)
 	(std::string, value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-	summer::server::http::Request,
+	summer::http::Request,
 	(std::string, method)
 	(summer::net::URI, uri)
 	(int, http_version_major)
 	(int, http_version_minor)
-	(summer::server::http::Request::Headers, headers)
+	(summer::http::Request::Headers, headers)
 	(std::string, body)
 )
 
-namespace summer { namespace server { namespace http {
+namespace summer { namespace http {
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -119,7 +121,7 @@ entity-body    = *OCTET
 template <typename Iterator>
 struct request_grammar : qi::grammar<Iterator, Request()> {
 	request_grammar() : request_grammar::base_type(start) {
-		using exceptions::BadRequestException;
+		using server::exceptions::BadRequestException;
 		using qi::eps;
 		using qi::uint_;
 		using qi::lit;
@@ -150,7 +152,6 @@ struct request_grammar : qi::grammar<Iterator, Request()> {
 
 		CRLF = "\r\n";
 
-#define PARSING_DEBUG
 #ifdef PARSING_DEBUG
 		BOOST_SPIRIT_DEBUG_NODE(start);
 		BOOST_SPIRIT_DEBUG_NODE(simple_header);
@@ -183,7 +184,7 @@ struct request_grammar : qi::grammar<Iterator, Request()> {
 	qi::rule<Iterator> CRLF;
 };
 
-}}}
+}}
 
 
 #endif /* REQUESTGRAMMAR_H_ */

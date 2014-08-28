@@ -5,7 +5,7 @@
  *      Author: Massimo Bianchi (Gestiware srl)
  */
 
-#include <net/URI.h>
+#include <summer/net/URI.h>
 
 namespace summer { namespace net {
 

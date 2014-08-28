@@ -8,21 +8,21 @@
 #ifndef ROOTDISPATCHER_H_
 #define ROOTDISPATCHER_H_
 
-#include <basic_apps/FileSystemApplication.h>
-#include <conf/config.h>
-#include <basic_apps/ApplicationRegistry.h>
-#include <basic_apps/ExceptionApplication.h>
-#include <Request.h>
+#include <summer/conf/config.h>
+#include <summer/apps/ApplicationRegistry.h>
+
+#include <summer/apps/basic/FileSystemApplication.h>
+#include <summer/apps/basic/ExceptionApplication.h>
 
 namespace summer { namespace server {
 
-template<class ConfigurationPolicy>
+template<class ConfigurationPolicy, class _Request>
 class RootDispatcher {
 public:
-	typedef http::Request Request;
+	typedef _Request Request;
 	typedef ConfigurationPolicy Configuration;
-	typedef basic_apps::FileSystemApplication<Configuration> FileSystemApplication;
-	typedef basic_apps::ExceptionApplication ExceptionApplication;
+	typedef apps::basic::FileSystemApplication<Configuration> FileSystemApplication;
+	typedef apps::basic::ExceptionApplication ExceptionApplication;
 	RootDispatcher(const Configuration &config) : fsApp(config) {}
 
 	Application &select(const Request &request) {

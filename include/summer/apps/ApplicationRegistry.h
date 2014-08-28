@@ -2,19 +2,20 @@
  * ApplicationRegistry.h
  *
  *  Created on: 26/giu/2014
- *      Author: massimo
+ *      Author: massimo bianchi
  */
 
 #ifndef SUMMER_APPLICATIONREGISTRY_H_
 #define SUMMER_APPLICATIONREGISTRY_H_
 
-#include <Exceptions.h>
+#include <summer/Exceptions.h>
+#include <summer/http/Request.h>
 
 #include <boost/noncopyable.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+
 #include <string>
 #include <map>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <Request.h>
 
 namespace summer {
 
@@ -40,7 +41,7 @@ struct Entry {
 
 class ApplicationRegistry : private boost::noncopyable {
 public:
-	typedef server::http::Request Request;
+	typedef http::Request Request;
 	typedef boost::ptr_vector<apps::Entry> Applications;
 	typedef Applications::iterator			iterator;
 	typedef Applications::const_iterator	const_iterator;
@@ -68,6 +69,7 @@ public:
 
 		const std::string name;
 	};
+
 	static ApplicationRegistry &instance() {
 		static ApplicationRegistry _instance;
 		return _instance;
@@ -95,10 +97,11 @@ public:
 	iterator end() { return applications.end(); }
 	const_iterator begin() const { return applications.begin(); }
 	const_iterator end() const { return applications.end(); }
+
 private:
 	ApplicationRegistry() {}
 
-	Registry registry;
+	Registry 		registry;
 	Applications	applications;
 
 	static int sessionCount;
