@@ -1,18 +1,19 @@
 /*
- * requestGrammar.h
+ * summer - summer/http/requestGrammar.h
+ * Author: Massimo Bianchi 2014
  *
- *  Created on: 04/lug/2014
- *      Author: Massimo Bianchi (Gestiware srl)
+ * Defines HTTP message grammar
  */
+#ifndef SUMMER_HTTP_REQUESTGRAMMAR_H_
+#define SUMMER_HTTP_REQUESTGRAMMAR_H_
 
-#ifndef REQUESTGRAMMAR_H_
-#define REQUESTGRAMMAR_H_
-
+// enable for parsing debug
 #undef PARSING_DEBUG
 
 #include <summer/logger.h>
-#include <summer/http/Request.h>
 #include <summer/Exceptions.h>
+
+#include <summer/http/basic.h>
 
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_object.hpp>
@@ -118,6 +119,10 @@ message-body = entity-body
 entity-body    = *OCTET
 
  */
+
+/**
+ * The HTTP Request Grammar class for boost::spirit parser
+ */
 template <typename Iterator>
 struct request_grammar : qi::grammar<Iterator, Request()> {
 	request_grammar() : request_grammar::base_type(start) {
@@ -173,18 +178,17 @@ struct request_grammar : qi::grammar<Iterator, Request()> {
 #endif
 	}
 
-	qi::rule<Iterator, Request()> start;
-	qi::rule<Iterator, std::string()> method;
-	qi::rule<Iterator, std::string()> uri;
-	qi::rule<Iterator, Header()> simple_header;
-	qi::rule<Iterator, Request::Headers()> headers;
-	qi::rule<Iterator, std::string()> header_name;
-	qi::rule<Iterator, std::string()> header_value;
-	qi::rule<Iterator, std::string()> message_body;
-	qi::rule<Iterator> CRLF;
+	qi::rule<Iterator, Request()> start;				//!< Start Symbol
+	qi::rule<Iterator, std::string()> method;			//!< method token grammar
+	qi::rule<Iterator, std::string()> uri;				//!< uri grammar
+	qi::rule<Iterator, Header()> simple_header;			//!< http header grammar
+	qi::rule<Iterator, Request::Headers()> headers;		//!< http headers grammar
+	qi::rule<Iterator, std::string()> header_name;		//!< header name
+	qi::rule<Iterator, std::string()> header_value;		//!< header value
+	qi::rule<Iterator, std::string()> message_body;		//!< http message
+	qi::rule<Iterator> CRLF;							//!< new line http rule
 };
 
 }}
 
-
-#endif /* REQUESTGRAMMAR_H_ */
+#endif /* SUMMER_HTTP_REQUESTGRAMMAR_H_ */

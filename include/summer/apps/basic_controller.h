@@ -8,8 +8,7 @@
 #ifndef SUMMER_BASIC_CONTROLLER_H_
 #define SUMMER_BASIC_CONTROLLER_H_
 
-#include <summer/http/Request.h>
-#include <summer/http/Reply.h>
+#include <summer/http/basic.h>
 
 namespace summer {
 

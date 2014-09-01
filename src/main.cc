@@ -6,8 +6,8 @@
 //
 
 #include <summer/logger.h>
-#include <summer/server/Server.h>
-#include <summer/conf/config.h>
+
+#include <summer/http/Server.h>
 #include <summer/server/WebAppFolder.h>
 
 #include <boost/asio.hpp>
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 	  logger::initLogger();
 	  server::WebAppFolder::instance().scan();
 
-	  server::StdServer s;
+	  http::StdServer s;
 	  s.run();
   } catch (exception& e) {
 	  logger::server.errorStream() << "exception: " << e.what();

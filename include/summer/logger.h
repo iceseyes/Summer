@@ -41,6 +41,7 @@ typedef EmptyLogger LoggerCategory;
 extern LoggerCategory &root;
 extern LoggerCategory &http;
 extern LoggerCategory &server;
+extern LoggerCategory &net;
 
 void initLogger();
 

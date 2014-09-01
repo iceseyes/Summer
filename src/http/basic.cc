@@ -3,92 +3,71 @@
 // ~~~~~~~~~
 //
 
-#include <summer/http/Reply.h>
+#include <summer/http/basic.h>
 
 #include <boost/lexical_cast.hpp>
 
 #include <string>
 
+using namespace std;
+using namespace boost;
+
 namespace summer { namespace http {
 
 namespace status_strings {
 
-const std::string ok = "HTTP/1.0 200 OK\r\n";
-const std::string created = "HTTP/1.0 201 Created\r\n";
-const std::string accepted = "HTTP/1.0 202 Accepted\r\n";
-const std::string no_content = "HTTP/1.0 204 No Content\r\n";
-const std::string multiple_choices = "HTTP/1.0 300 Multiple Choices\r\n";
-const std::string moved_permanently = "HTTP/1.0 301 Moved Permanently\r\n";
-const std::string moved_temporarily = "HTTP/1.0 302 Moved Temporarily\r\n";
-const std::string not_modified = "HTTP/1.0 304 Not Modified\r\n";
-const std::string bad_request = 		 "HTTP/1.0 400 Bad Request\r\n";
-const std::string unauthorized = 		 "HTTP/1.0 401 Unauthorized\r\n";
-const std::string forbidden = 			 "HTTP/1.0 403 Forbidden\r\n";
-const std::string not_found = 			 "HTTP/1.0 404 Not Found\r\n";
-const std::string internal_server_error ="HTTP/1.0 500 Internal Server Error\r\n";
-const std::string not_implemented = 	"HTTP/1.0 501 Not Implemented\r\n";
-const std::string bad_gateway = 		"HTTP/1.0 502 Bad Gateway\r\n";
-const std::string service_unavailable = "HTTP/1.0 503 Service Unavailable\r\n";
+const string ok = "HTTP/1.0 200 OK\r\n";
+const string created = "HTTP/1.0 201 Created\r\n";
+const string accepted = "HTTP/1.0 202 Accepted\r\n";
+const string no_content = "HTTP/1.0 204 No Content\r\n";
+const string multiple_choices = "HTTP/1.0 300 Multiple Choices\r\n";
+const string moved_permanently = "HTTP/1.0 301 Moved Permanently\r\n";
+const string moved_temporarily = "HTTP/1.0 302 Moved Temporarily\r\n";
+const string not_modified = "HTTP/1.0 304 Not Modified\r\n";
+const string bad_request = 		 "HTTP/1.0 400 Bad Request\r\n";
+const string unauthorized = 		 "HTTP/1.0 401 Unauthorized\r\n";
+const string forbidden = 			 "HTTP/1.0 403 Forbidden\r\n";
+const string not_found = 			 "HTTP/1.0 404 Not Found\r\n";
+const string internal_server_error ="HTTP/1.0 500 Internal Server Error\r\n";
+const string not_implemented = 	"HTTP/1.0 501 Not Implemented\r\n";
+const string bad_gateway = 		"HTTP/1.0 502 Bad Gateway\r\n";
+const string service_unavailable = "HTTP/1.0 503 Service Unavailable\r\n";
 
-boost::asio::const_buffer to_buffer(Reply::status_type status) {
+asio::const_buffer to_buffer(Reply::status_type status) {
 	switch (status) {
-	case Reply::ok: return boost::asio::buffer(ok); break;
-	case Reply::created: return boost::asio::buffer(created); break;
-	case Reply::accepted: return boost::asio::buffer(accepted); break;
-	case Reply::no_content: return boost::asio::buffer(no_content); break;
-	case Reply::multiple_choices: return boost::asio::buffer(multiple_choices); break;
+	case Reply::ok: return asio::buffer(ok); break;
+	case Reply::created: return asio::buffer(created); break;
+	case Reply::accepted: return asio::buffer(accepted); break;
+	case Reply::no_content: return asio::buffer(no_content); break;
+	case Reply::multiple_choices: return asio::buffer(multiple_choices); break;
 	case Reply::moved_permanently:
-		return boost::asio::buffer(moved_permanently);
+		return asio::buffer(moved_permanently);
 	case Reply::moved_temporarily:
-		return boost::asio::buffer(moved_temporarily);
+		return asio::buffer(moved_temporarily);
 	case Reply::not_modified:
-		return boost::asio::buffer(not_modified);
+		return asio::buffer(not_modified);
 	case Reply::bad_request:
-		return boost::asio::buffer(bad_request);
+		return asio::buffer(bad_request);
 	case Reply::unauthorized:
-		return boost::asio::buffer(unauthorized);
+		return asio::buffer(unauthorized);
 	case Reply::forbidden:
-		return boost::asio::buffer(forbidden);
+		return asio::buffer(forbidden);
 	case Reply::not_found:
-		return boost::asio::buffer(not_found);
+		return asio::buffer(not_found);
 	case Reply::internal_server_error:
-		return boost::asio::buffer(internal_server_error);
+		return asio::buffer(internal_server_error);
 	case Reply::not_implemented:
-		return boost::asio::buffer(not_implemented);
+		return asio::buffer(not_implemented);
 	case Reply::bad_gateway:
-		return boost::asio::buffer(bad_gateway);
+		return asio::buffer(bad_gateway);
 	case Reply::service_unavailable:
-		return boost::asio::buffer(service_unavailable);
+		return asio::buffer(service_unavailable);
 	default:
-		return boost::asio::buffer(internal_server_error);
+		return asio::buffer(internal_server_error);
 	}
 }
 
 } // namespace status_strings
-
-namespace misc_strings {
-
-const char name_value_separator[] = { ':', ' ' };
-const char crlf[] = { '\r', '\n' };
-
-} // namespace misc_strings
-
-std::vector<boost::asio::const_buffer> Reply::to_buffers() {
-	std::vector<boost::asio::const_buffer> buffers;
-	buffers.push_back(status_strings::to_buffer(status));
-	for (std::size_t i = 0; i < headers.size(); ++i) {
-		Header& h = headers[i];
-		buffers.push_back(boost::asio::buffer(h.name));
-		buffers.push_back(
-				boost::asio::buffer(misc_strings::name_value_separator));
-		buffers.push_back(boost::asio::buffer(h.value));
-		buffers.push_back(boost::asio::buffer(misc_strings::crlf));
-	}
-
-	buffers.push_back(boost::asio::buffer(misc_strings::crlf));
-	buffers.push_back(boost::asio::buffer(content));
-	return buffers;
-}
 
 namespace stock_replies {
 
@@ -169,7 +148,7 @@ const char service_unavailable[] =
   "<body><h1>503 Service Unavailable</h1></body>"
   "</html>";
 
-std::string to_string(Reply::status_type status) {
+string to_string(Reply::status_type status) {
 	switch (status) {
 	case Reply::ok:
 		return ok;
@@ -210,13 +189,57 @@ std::string to_string(Reply::status_type status) {
 
 }
 
+namespace misc_strings {
+
+const char name_value_separator[] = { ':', ' ' };
+const char crlf[] = { '\r', '\n' };
+
+} // namespace misc_strings
+
+string &Request::operator[](const string &header) {
+	Headers::iterator iter = find(headers.begin(), headers.end(), header);
+	if(iter!=headers.end())
+		return iter->value;
+
+	Header h;
+	h.name = header;
+
+	headers.push_back(h);
+	return headers.back().value;
+}
+
+string Request::operator[](const string &header) const {
+	Headers::const_iterator iter = find(headers.begin(), headers.end(), header);
+	if(iter!=headers.end())
+		return iter->value;
+
+	return "";
+}
+
+vector<asio::const_buffer> Reply::to_buffers() {
+	vector<asio::const_buffer> buffers;
+	buffers.push_back(status_strings::to_buffer(status));
+	for (size_t i = 0; i < headers.size(); ++i) {
+		Header& h = headers[i];
+		buffers.push_back(asio::buffer(h.name));
+		buffers.push_back(
+				asio::buffer(misc_strings::name_value_separator));
+		buffers.push_back(asio::buffer(h.value));
+		buffers.push_back(asio::buffer(misc_strings::crlf));
+	}
+
+	buffers.push_back(asio::buffer(misc_strings::crlf));
+	buffers.push_back(asio::buffer(content));
+	return buffers;
+}
+
 Reply Reply::stock_reply(Reply::status_type status) {
   Reply rep;
   rep.status = status;
   rep.content = stock_replies::to_string(status);
   rep.headers.resize(2);
   rep.headers[0].name = "Content-Length";
-  rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
+  rep.headers[0].value = lexical_cast<string>(rep.content.size());
   rep.headers[1].name = "Content-Type";
   rep.headers[1].value = "text/html";
   return rep;

@@ -15,7 +15,7 @@ namespace summer { namespace apps { namespace basic {
 struct ExceptionApplication : public Application {
 	std::string message;
 
-	virtual void operator()(const Request &request, Reply &rep) {
+	virtual void operator()(const Request &request, Reply &rep) const {
 		rep.stock_reply(Reply::internal_server_error);
 		rep.content = "<html><head><title>500 - Internal Summer Server Error</title></head><body>";
 		rep.content += "<h1 style='background-color: orange;'>500 - Internal Server Error</h1>";

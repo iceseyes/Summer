@@ -28,7 +28,10 @@ public:
 	FileSystemApplication(const Configuration &config) :
 		_docRoot(config.docRoot()) {}
 
-	virtual void operator()(const Request &request, Reply &rep) {
+	virtual void operator()(const Request &request, Reply &rep) const {
+		logger::server.infoStream()
+				<< "No Application Found, trying file system searching...";
+
 		URL request_url(request.uri);
 		std::string &request_path = request_url;
 

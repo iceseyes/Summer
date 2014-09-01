@@ -8,42 +8,27 @@
 #ifndef ROOTDISPATCHER_H_
 #define ROOTDISPATCHER_H_
 
-#include <summer/conf/config.h>
-#include <summer/apps/ApplicationRegistry.h>
-
-#include <summer/apps/basic/FileSystemApplication.h>
-#include <summer/apps/basic/ExceptionApplication.h>
-
 namespace summer { namespace server {
 
-template<class ConfigurationPolicy, class _Request>
-class RootDispatcher {
-public:
-	typedef _Request Request;
-	typedef ConfigurationPolicy Configuration;
-	typedef apps::basic::FileSystemApplication<Configuration> FileSystemApplication;
-	typedef apps::basic::ExceptionApplication ExceptionApplication;
-	RootDispatcher(const Configuration &config) : fsApp(config) {}
-
-	Application &select(const Request &request) {
-		try{
-			logger::http.debugStream() << "RootDispatcher::select => searching webapp for " << request.uri;
-			return ApplicationRegistry::instance().get(request);
-		} catch(exceptions::ApplicationNotFoundException &e) {
-			logger::http.debugStream() << "RootDispatcher::select => exception: " << e.what();
-			return fsApp;
-		} catch (std::exception &e) {
-			logger::http.errorStream() << "RootDispatcher::select => exception: " << e.what();
-			exApp.message = e.what();
-			return exApp;
-		}
-	}
-
-private:
-
-	FileSystemApplication fsApp; /// the last
-	ExceptionApplication exApp;
-};
+/**
+ * Select which Application can handle a client request to produce a reply.
+ *
+ * RootDispatcher depends by the protocol. The generic RootDispatcher comes with a
+ * compile error (it is not defined). Clients must include specific protocol implementation
+ * like http::RootDispatcher.
+ *
+ * Every RootDispatcher must implement an overload of operator apply:
+ *
+ * 		void operator()(const _Request &request, _Reply &reply)
+ *
+ * and badRequest() method that return a reply when request is not well formed:
+ *
+ * 		void badRequest(_Reply &reply)
+ *
+ * RootDispatcher must define types for RootDispatcher::Configuration, RootDispatcher::Request, RootDispatcher::Reply.
+ */
+template<class ConfigurationPolicy, class _Request, class _Reply>
+class RootDispatcher;
 
 }}
 

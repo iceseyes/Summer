@@ -8,8 +8,7 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
-#include <summer/http/Reply.h>
-#include <summer/http/Request.h>
+#include <summer/http/basic.h>
 #include <summer/apps/basic_controller.h>
 
 #include <string>
@@ -23,7 +22,7 @@ public:
 	typedef http::Request Request;
 
 	virtual ~Application();
-	void operator()(const Request &request, Reply &rep) const;
+	virtual void operator()(const Request &request, Reply &rep) const;
 
 	class _Handle {
 		void push(const std::string &resourcePath, const std::string &method = "any");

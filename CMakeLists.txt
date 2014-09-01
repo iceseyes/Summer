@@ -1,14 +1,21 @@
-project(SummerServer)
 cmake_minimum_required(VERSION 2.8)
+
+project(SummerServer)
+set(SummerServer_VERSION 0.1)
 
 set(SERVER_SRCS
     src/logger.cc
     
-    src/server/Application.cc
+    src/server/Server.cc
     src/server/WebAppFolder.cc
+    
+    src/server/Application.cc
     src/server/mime_types.cc
     src/server/UrlHandler.cc
-    src/server/Request.cc src/server/Reply.cc
+    
+    src/http/basic.cc
+    src/http/RootDispatcher.cc
+    
     src/server/ApplicationRegistry.cc
     src/server/URL.cc src/server/URI.cc
 )
@@ -81,4 +88,5 @@ target_link_libraries ( Summer
     ${WINLIBS}
 )
 
-add_subdirectory(examples) 
+add_subdirectory(examples)
+add_subdirectory(doc)

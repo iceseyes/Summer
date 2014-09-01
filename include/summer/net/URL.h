@@ -47,7 +47,7 @@ public:
 		if(!tokens.empty())
 			out = tokens.at(0);
 
-		logger::http.debugStream() << "URL::resourcePath() url: " << _url << ", Application: " << out;
+		logger::net.debugStream() << "URL::resourcePath() url: " << _url << ", Application: " << out;
 		return out;
 	}
 
@@ -58,7 +58,7 @@ public:
 		if(!tokens.empty()) tokens.erase(tokens.begin());
 
 		std::string out = boost::join(tokens, "/");
-		logger::http.debugStream() << "URL::resourcePath() url: " << _url << ", resourcePath: " << out;
+		logger::net.debugStream() << "URL::resourcePath() url: " << _url << ", resourcePath: " << out;
 
 		return out;
 	}
@@ -79,7 +79,7 @@ private:
 		if(!tokens.empty() && tokens[0].empty())
 			tokens.erase(tokens.begin());
 
-		logger::http.debugStream() << "URL::pathTokens => tokens " << tokens;
+		logger::net.debugStream() << "URL::pathTokens => tokens " << tokens;
 
 		return tokens;
 	}

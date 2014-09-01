@@ -9,7 +9,7 @@
 #define SUMMER_APPLICATIONREGISTRY_H_
 
 #include <summer/Exceptions.h>
-#include <summer/http/Request.h>
+#include <summer/http/basic.h>
 
 #include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
