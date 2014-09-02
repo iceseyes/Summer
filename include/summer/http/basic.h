@@ -13,6 +13,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <algorithm>
 
 /** \namespace summer::http
@@ -52,14 +53,25 @@ struct Request {
 	std::string body;			//!< Request body
 
 	/// Access to header by name. If header doesn't exist create a new one.
-	/// @param name [in] header name.
+	/// @param header [in] header name.
 	/// @return the corresponding header value
 	std::string &operator[](const std::string &header);
 
 	/// Access to header by name.
-	/// @param name [in] header name.
+	/// @param header [in] header name.
 	/// @return the corresponding header value, if header exist. Empty otherwise.
 	std::string operator[](const std::string &header) const;
+
+	/// Return the string value of name-parameter.
+	/// @return The string value of parameter name if exist, or an empty string otherwise.
+	std::string parameter(const std::string &name) const;
+
+private:
+	using Parameters = std::map<std::string, std::string>;
+
+	Parameters &params() const;
+
+	mutable Parameters _params;
 };
 
 /// An HTTP Reply

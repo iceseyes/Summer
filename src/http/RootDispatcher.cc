@@ -16,7 +16,15 @@
 namespace summer { namespace http {
 
 void RootDispatcher::operator()(const Request &request, Reply &reply) {
-	select(request)(request, reply);
+	try{
+		select(request)(request, reply);
+	} catch(server::exceptions::NoControllerDefined &e) {
+		logger::server.warnStream()
+				<< "http::RootDispatcher() "
+				<< "Required controller no defined in application. Trying File System Search for "
+				<< request.uri;
+		filesystemApplication()(request, reply);
+	}
 }
 
 void RootDispatcher::badRequest(Reply& reply) {

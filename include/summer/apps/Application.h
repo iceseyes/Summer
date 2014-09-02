@@ -18,8 +18,8 @@ namespace summer {
 
 class Application {
 public:
-	typedef http::Reply Reply;
-	typedef http::Request Request;
+	using Reply 	= http::Reply;
+	using Request 	= http::Request;
 
 	virtual ~Application();
 	virtual void operator()(const Request &request, Reply &rep) const;
@@ -47,7 +47,7 @@ public:
 			bool operator()(const Application::Request &request, Application::Reply &reply) const;
 
 		private:
-			typedef std::shared_ptr<ApplyController> ApplyControllerPtr;
+			using ApplyControllerPtr = std::shared_ptr<ApplyController>;
 
 			std::string resourcePath;
 			std::string method;
@@ -55,9 +55,9 @@ public:
 		};
 
 	public:
-		typedef std::vector<_Request> RequestDescriptors;
-		typedef RequestDescriptors::iterator iterator;
-		typedef RequestDescriptors::const_iterator const_iterator;
+		using RequestDescriptors 	= std::vector<_Request>;
+		using iterator 				= RequestDescriptors::iterator;
+		using const_iterator 		= RequestDescriptors::const_iterator;
 
 		_Handle &request(const std::string &resourcePath) { push(resourcePath); return *this; }
 		_Handle &get(const std::string &resourcePath) { push(resourcePath, "GET"); return *this; }
@@ -79,6 +79,7 @@ public:
 
 	} handle;
 };
+
 }
 
 

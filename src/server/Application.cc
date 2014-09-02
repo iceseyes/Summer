@@ -22,7 +22,8 @@ namespace summer {
 bool Application::_Handle::_Request::match(const Application::Request &request) const {
 	if(method.empty() || method == "any" || method == boost::to_upper_copy(request.method)) {
 		URL url(request.uri);	// parsing uri
-		return boost::trim_copy(resourcePath) == boost::trim_copy(url.resourcePath());
+		bool nameMatch = boost::trim_copy(resourcePath) == boost::trim_copy(url.resourcePath());
+		return nameMatch && applier->match(request);
 	}
 
 	return false;

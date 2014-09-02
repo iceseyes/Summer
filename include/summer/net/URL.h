@@ -58,7 +58,19 @@ public:
 		if(!tokens.empty()) tokens.erase(tokens.begin());
 
 		std::string out = boost::join(tokens, "/");
+		out = out.substr(0, out.find_first_of('?',0));
 		logger::net.debugStream() << "URL::resourcePath() url: " << _url << ", resourcePath: " << out;
+
+		return out;
+	}
+
+	std::string params() const {
+		PathTokens tokens = pathTokens();
+		std::string out = boost::join(tokens, "/");
+		int pos = out.find_first_of('?',0);
+		out = (pos!=std::string::npos) ? out.substr(pos + 1) : "";
+
+		logger::net.debugStream() << "URL::params() url: " << _url << ", params: " << out;
 
 		return out;
 	}

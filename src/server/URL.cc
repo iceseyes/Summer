@@ -23,4 +23,3 @@ ostream &operator<<(ostream &out, vector<string> v) {
 }
 
 }
-

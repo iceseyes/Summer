@@ -3,8 +3,13 @@
 // ~~~~~~~~~
 //
 
+#include <summer/logger.h>
+
 #include <summer/http/basic.h>
 
+#include <summer/net/URL.h>
+
+#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <string>
@@ -214,6 +219,64 @@ string Request::operator[](const string &header) const {
 		return iter->value;
 
 	return "";
+}
+
+string Request::parameter(const string& name) const {
+	Parameters::const_iterator iter = params().find(name);
+	if(iter!=params().end())
+		return iter->second;
+
+	return "";
+}
+
+Request::Parameters &Request::params() const {
+	using boost::split;
+	using boost::is_any_of;
+	using boost::token_compress_on;
+	using Tokens = vector<string>;
+
+	if(_params.size()==0) {
+		net::URL url {uri};
+		Tokens tokens;
+
+		string params { url.params() };
+		if(params.size()>0) params += "&";
+		params += body;
+
+		boost::split(tokens, params, is_any_of("&"), token_compress_on);
+
+		for(string token : tokens) {
+			if(token.empty()) continue;
+
+			logger::http.debugStream()
+				<< "Request::params(): "
+				<< "processing request body token '"
+				<< token << "' as parameter pair...";
+
+			Tokens nv_pair;
+			boost::split(nv_pair, token, is_any_of("="), token_compress_on);
+
+			int ntok = nv_pair.size();
+			switch(ntok) {
+			case 0:
+			case 1:
+				logger::http.debugStream()
+					<< "Request::params(): "
+					<< "'" << token << "'" << " no value found.";
+				_params[token] = "";
+				break;
+			default:
+				logger::http.debugStream()
+					<< "Request::params(): "
+					<< "'" << token << "'" << " make parameter '"
+					<< nv_pair[0] << "' with value '" << nv_pair[1] << "'.";
+				_params[nv_pair[0]] = nv_pair[1];
+				break;
+			}
+		}
+	}
+
+	return _params;
 }
 
 vector<asio::const_buffer> Reply::to_buffers() {
