@@ -5,9 +5,11 @@
  *      Author: massimo
  */
 
-#include <summer/apps/Application.h>
-#include <summer/net/URL.h>
 #include <summer/Exceptions.h>
+
+#include <summer/net/URL.h>
+#include <summer/data/Model.h>
+#include <summer/apps/Application.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -21,8 +23,14 @@ namespace summer {
 
 bool Application::_Handle::_Request::match(const Application::Request &request) const {
 	if(method.empty() || method == "any" || method == boost::to_upper_copy(request.method)) {
-		URL url(request.uri);	// parsing uri
-		bool nameMatch = boost::trim_copy(resourcePath) == boost::trim_copy(url.resourcePath());
+		bool nameMatch = catchAll && resourcePath.empty();
+		if(!nameMatch) {
+			URL url(request.uri);	// parsing uri
+			if(catchAll)
+				nameMatch = url.resourcePath().find(resourcePath) == 0;
+			else
+				nameMatch = boost::trim_copy(resourcePath) == boost::trim_copy(url.resourcePath());
+		}
 		return nameMatch && applier->match(request);
 	}
 
@@ -57,10 +65,19 @@ void Application::_Handle::operator()(const Request &request, Reply &reply) cons
 	}
 }
 
-}
+Application::_Handle &Application::_Handle::request(const std::string &resourcePath) { push(resourcePath); return *this; }
+Application::_Handle &Application::_Handle::get(const std::string &resourcePath) { push(resourcePath, "GET"); return *this; }
+Application::_Handle &Application::_Handle::post(const std::string &resourcePath) { push(resourcePath, "POST"); return *this; }
+Application::_Handle &Application::_Handle::all(const std::string &resourcePath) { push_all(resourcePath); return *this; }
 
-void summer::Application::_Handle::push(
+void Application::_Handle::push(
 		const std::string& resourcePath,
 		const std::string& method) {
-	controllers.push_back(_Request(resourcePath, method));
+	controllers.push_back(_Request(this, resourcePath, method));
+}
+
+void Application::_Handle::push_all(const std::string& resourcePath) {
+	controllers.push_back(_Request(this, resourcePath, "any", true));
+}
+
 }

@@ -308,4 +308,14 @@ Reply Reply::stock_reply(Reply::status_type status) {
   return rep;
 }
 
+inline bool Header::operator==(const std::string &name) const { return this->name == name; }
+
+Header &Header::operator=(const std::pair<std::string, std::string> &p) {
+	name = p.first; value = p.second;
+	return *this;
+}
+
+Header::operator std::pair<std::string, std::string>() const {
+	return std::pair<std::string, std::string> {name, value};
+}
 }}

@@ -1,5 +1,3 @@
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
-
 IF(BUILD_DOCUMENTATION)
  
   FIND_PACKAGE(Doxygen)

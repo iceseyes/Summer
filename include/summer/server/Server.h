@@ -10,11 +10,11 @@
 #include <summer/server/SimpleConnection.h>
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <string>
 #include <memory>
+#include <functional>
 
 /** \namespace summer
  * \brief summer namespace defines all structures of summer library.
@@ -40,6 +40,12 @@
  */
 
 namespace summer { namespace server {
+
+template<
+	class ConfigurationPolicy,
+	class _Request, class _Reply,
+	template<class, class, class> class ConnectionPolicy>
+class Server;
 
 /// basic implementation functions
 namespace __impl {
@@ -81,7 +87,7 @@ namespace __impl {
 	 * @param ioService [in] Server service.
 	 * @param _threadPool_size [in] Number of threads.
 	 */
-	void runService(boost::asio::io_service *ioService, std::size_t _threadPool_size);
+	void runService(std::function<void()> service, std::size_t _threadPool_size);
 }
 
 /**
@@ -111,7 +117,10 @@ public:
 			_currentConnection() {
 
 		__impl::initStopSignals(_stopSignals);
-		_stopSignals.async_wait(boost::bind(&Server::stop, this));
+		_stopSignals.async_wait(
+				[&](const boost::system::error_code& error, int signal) {
+					this->stop();
+				});
 
 		__impl::initAcceptor(_acceptor,
 				*__impl::getEndPoint(
@@ -129,14 +138,20 @@ public:
 	 * It represents the server main loop. When a client try to connect with
 	 * this server, a thread is assigned as handle for that client requests.
 	 */
-	void run() { __impl::runService(&_ioService, _threadPool_size); }
+	void run() {
+		__impl::runService(
+			[&](){ _ioService.run(); },
+			_threadPool_size);
+	}
 
 private:
 	void start() {
 		_currentConnection.reset(new Connection(_ioService, Configuration::instance()));
-		_acceptor.async_accept(_currentConnection->socket(),
-				boost::bind(&Server::accept, this,
-						boost::asio::placeholders::error));
+		_acceptor.async_accept(
+				_currentConnection->socket(),
+				[&](const boost::system::error_code& e){
+					this->accept(e);
+				});
 	}
 
 	void stop() { _ioService.stop(); }

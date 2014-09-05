@@ -21,10 +21,11 @@ typedef _off64_t off64_t;
 namespace summer { namespace logger {
 
 #ifdef LOGGER
-typedef log4cpp::Category LoggerCategory;
+using LoggerCategory = log4cpp::Category;
 
 #else
 
+/// Defines a dummy logger
 class EmptyLogger {
 	void debug(std::string &m) {}
 	void info(std::string &m)  {}
@@ -34,7 +35,7 @@ class EmptyLogger {
 	static EmptyLogger &getInstance(const std::string &name) { return summer::logger::root; }
 };
 
-typedef EmptyLogger LoggerCategory;
+using LoggerCategory = EmptyLogger;
 
 #endif
 
@@ -42,6 +43,7 @@ extern LoggerCategory &root;
 extern LoggerCategory &http;
 extern LoggerCategory &server;
 extern LoggerCategory &net;
+extern LoggerCategory &views;
 
 void initLogger();
 

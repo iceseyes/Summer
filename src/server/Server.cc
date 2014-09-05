@@ -12,7 +12,6 @@
 
 using namespace std;
 using namespace boost::asio;
-using boost::bind;
 
 using acceptor = ip::tcp::acceptor;
 using endpoint = ip::tcp::endpoint;
@@ -48,11 +47,14 @@ resolver::iterator getEndPoint(io_service &ioService,
 	return resolver.resolve(query);
 }
 
-void runService(boost::asio::io_service *ioService, std::size_t _threadPool_size) {
+void runService(std::function<void()> service, std::size_t _threadPool_size) {
+	logger::server.infoStream()
+			<< "Server::run() "
+			<< "Creating " << _threadPool_size << " connections threads.";
+
 	ThreadList threads;
 	for (std::size_t i = 0; i < _threadPool_size; ++i) {
-		ThreadPtr thread(
-			new Thread(bind(&io_service::run, ioService)));
+		ThreadPtr thread(new Thread(service));
 		threads.push_back(thread);
 	}
 

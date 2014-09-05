@@ -7,21 +7,15 @@
 
 #include <summer/logger.h>
 
-#ifdef LOGGER
+namespace summer { namespace logger {
 
-log4cpp::Category &summer::logger::root = log4cpp::Category::getRoot();
-log4cpp::Category &summer::logger::http = log4cpp::Category::getInstance(std::string("http"));
-log4cpp::Category &summer::logger::server = log4cpp::Category::getInstance(std::string("server"));
-log4cpp::Category &summer::logger::net = log4cpp::Category::getInstance(std::string("net"));
+LoggerCategory &root = log4cpp::Category::getRoot();
+LoggerCategory &http = log4cpp::Category::getInstance(std::string("http"));
+LoggerCategory &server = log4cpp::Category::getInstance(std::string("server"));
+LoggerCategory &net = log4cpp::Category::getInstance(std::string("net"));
+LoggerCategory &views = log4cpp::Category::getInstance(std::string("views"));
 
-#else
-
-EmptyLogger summer::logger::root;
-EmptyLogger summer::logger::http;
-
-#endif
-
-void summer::logger::initLogger() {
+void initLogger() {
 #ifdef LOGGER
 	std::string initFileName = "log4cpp.properties";
 	log4cpp::PropertyConfigurator::configure(initFileName);
@@ -29,6 +23,7 @@ void summer::logger::initLogger() {
 #endif
 }
 
+}}
 
 
 

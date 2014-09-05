@@ -3,32 +3,41 @@ cmake_minimum_required(VERSION 2.8)
 project(SummerServer)
 set(SummerServer_VERSION 0.1)
 
+option(USE_CLANG "build application with clang" OFF) # OFF is the default
+option(BUILD_DOCUMENTATION "Create and install based API documentation (requires Doxygen)" OFF)
+
+set(CMAKE_MODULE_PATH     ${CMAKE_MODULE_PATH} CMake)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
+
+set(SUMMER_WEBAPP_DIR ${CMAKE_BINARY_DIR}/webapps/)
+  
 set(SERVER_SRCS
     src/logger.cc
     
     src/server/Server.cc
     src/server/WebAppFolder.cc
     
-    src/server/Application.cc
+    src/server/URL.cc src/server/URI.cc
     src/server/mime_types.cc
     src/server/UrlHandler.cc
     
     src/http/basic.cc
     src/http/RootDispatcher.cc
     
-    src/server/ApplicationRegistry.cc
-    src/server/URL.cc src/server/URI.cc
+    src/apps/ApplicationRegistry.cc
+    src/apps/Application.cc
+    
+    src/views/DirectFileView.cc
 )
 
 set(SRCS
     src/main.cc
 )
 
-set(SUMMER_WEBAPP_DIR ${CMAKE_BINARY_DIR}/webapps/)
-
-message(STATUS ${CMAKE_PREFIX_PATH})
-
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
+if(USE_CLANG)
+    message(STATUS "Searching Clang Compiler in ${PATH}")
+    find_package(Clang REQUIRED)
+endif()
 
 find_package(PkgConfig REQUIRED)
 find_package(Log4CPP REQUIRED)
@@ -89,4 +98,5 @@ target_link_libraries ( Summer
 )
 
 add_subdirectory(examples)
+add_subdirectory(test)
 add_subdirectory(doc)

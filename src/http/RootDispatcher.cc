@@ -18,6 +18,7 @@ namespace summer { namespace http {
 void RootDispatcher::operator()(const Request &request, Reply &reply) {
 	try{
 		select(request)(request, reply);
+		reply.status = Reply::ok;
 	} catch(server::exceptions::NoControllerDefined &e) {
 		logger::server.warnStream()
 				<< "http::RootDispatcher() "

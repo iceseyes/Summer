@@ -14,14 +14,18 @@
 
 #include <boost/format.hpp>
 
+#include <algorithm>
+
+using namespace std;
+
 namespace summer {
 
 using net::URL;
 int ApplicationRegistry::sessionCount = 0;
 
 Application& ApplicationRegistry::get(const Request &request) {
-	std::string name = URL(request.uri).application();
-	std::string sessionID = request["Cookie"];
+	string name = URL(request.uri).application();
+	string sessionID = request["Cookie"];
 
 	logger::http.debugStream() << "ApplicationRegistry::get trying to find application named: "
 			<< name << " Cookies: " << sessionID;
@@ -34,7 +38,7 @@ Application& ApplicationRegistry::get(const Request &request) {
 
 	iterator iter = find(name);
 	if(iter!=end()) {
-		std::string sID =
+		string sID =
 				(boost::format("summer%1%") % ++sessionCount).str();
 		registry[sID] = iter->create();
 		Application &app = *registry[sID];
@@ -49,6 +53,16 @@ Application& ApplicationRegistry::get(const Request &request) {
 					<< name << " Cookies: " << sessionID;
 
 	throw server::exceptions::ApplicationNotFoundException(name);
+}
+
+ApplicationRegistry::iterator ApplicationRegistry::find(const string &name) {
+	return find_if(begin(), end(),
+			[&name](const apps::Entry &entry) { return entry.name == name; });
+}
+
+ApplicationRegistry::const_iterator ApplicationRegistry::find(const std::string &name) const {
+	return find_if(begin(), end(),
+			[&name](const apps::Entry &entry) { return entry.name == name; });
 }
 
 }

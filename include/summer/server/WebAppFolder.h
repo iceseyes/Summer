@@ -92,18 +92,19 @@ public:
 		return _instance;
 	}
 
+	/// Return the webapp folder
+	std::string folder() const { return Configuration::instance().docRoot(); }
+
 	/// scan webapp folder and load dictionary
 	_WebAppFolder &scan() {
 		using namespace __impl;
 		using namespace server::exceptions;
 		using namespace std;
 
-		string folder { Configuration::instance().docRoot() };
+		if(!checkWebAppFolder(folder()))
+			throw WebAppFolderDoesNotExist(folder());
 
-		if(!checkWebAppFolder(folder))
-			throw WebAppFolderDoesNotExist(folder);
-
-		scanModules(modules, folder);
+		scanModules(modules, folder());
 
 		return *this;
 	}

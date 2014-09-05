@@ -26,18 +26,32 @@ public:
 
 	class _Handle {
 		void push(const std::string &resourcePath, const std::string &method = "any");
+		void push_all(const std::string &resourcePath = "");
 
-		struct _Request {
-			_Request(const std::string &resourcePath, const std::string &method = "any") :
-					resourcePath(resourcePath), method(method) {}
+		class _Request {
+			using RequestHandlerPtr = std::shared_ptr<RequestHandler>;
+
+			std::string resourcePath;
+			std::string method;
+			RequestHandlerPtr applier;
+			bool catchAll;
+			_Handle *handle;
+
+		public:
+			_Request(_Handle *h,
+				const std::string &resourcePath,
+				const std::string &method = "any",
+				bool all = false) :
+					handle(h), resourcePath(resourcePath),
+					method(method), catchAll(all) {}
 
 			template<class Target> _Request &with() {
-				applier = ApplyControllerPtr(new basic_controller<Target>());
+				applier = RequestHandlerPtr(new basic_controller<Target>(handle->resolver));
 				 return *this;
 			}
 
 			template<class Target> _Request &with(Target *obj) {
-				applier = ApplyControllerPtr(obj);
+				applier = RequestHandlerPtr(obj);
 				 return *this;
 			}
 
@@ -45,13 +59,6 @@ public:
 			bool match(const Application::Request &request) const;
 
 			bool operator()(const Application::Request &request, Application::Reply &reply) const;
-
-		private:
-			using ApplyControllerPtr = std::shared_ptr<ApplyController>;
-
-			std::string resourcePath;
-			std::string method;
-			ApplyControllerPtr applier;
 		};
 
 	public:
@@ -59,9 +66,10 @@ public:
 		using iterator 				= RequestDescriptors::iterator;
 		using const_iterator 		= RequestDescriptors::const_iterator;
 
-		_Handle &request(const std::string &resourcePath) { push(resourcePath); return *this; }
-		_Handle &get(const std::string &resourcePath) { push(resourcePath, "GET"); return *this; }
-		_Handle &post(const std::string &resourcePath) { push(resourcePath, "POST"); return *this; }
+		_Handle &request(const std::string &resourcePath);
+		_Handle &get(const std::string &resourcePath);
+		_Handle &post(const std::string &resourcePath);
+		_Handle &all(const std::string &resourcePath = "");
 
 		template<class Target> _Handle &with() {
 			controllers.back().with<Target>();
@@ -76,7 +84,7 @@ public:
 		void operator()(const Request &request, Reply &reply) const;
 
 		RequestDescriptors controllers;
-
+		RequestHandler::Resolver resolver;
 	} handle;
 };
 

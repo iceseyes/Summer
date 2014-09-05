@@ -20,6 +20,8 @@
 using namespace std;
 using namespace summer;
 
+template class summer::views::ViewResolver<http::Reply>;
+
 int main(int argc, char* argv[]) {
   try {
 	  cout << "Starting summer server..." << endl;

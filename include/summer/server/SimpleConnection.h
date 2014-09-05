@@ -15,7 +15,6 @@
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/bind.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/logic/tribool.hpp>
 
@@ -54,7 +53,8 @@ public:
 	/// @param io_service [in] the network io service
 	/// @param conf [in] configuration parameters.
 	explicit SimpleConnection(boost::asio::io_service& io_service, const Configuration& conf) :
-			_strand(io_service), _socket(io_service), _requestHandler(conf) {}
+			_strand(io_service), _socket(io_service), _requestHandler(conf) {
+	}
 
 	/**
 	 * Starting handling messages from socket.
@@ -63,11 +63,18 @@ public:
 	 * process incoming message.
 	 */
 	void start() {
-		_socket.async_read_some(boost::asio::buffer(_buffer),
+		that = shared_from_this();
+
+		logger::http.debugStream()
+			<< "SimpleConnection::start() "
+			<< "Starting new connection.";
+
+		_socket.async_read_some(
+			boost::asio::buffer(_buffer),
 			_strand.wrap(
-				boost::bind(&SimpleConnection::onRead, shared_from_this(),
-					boost::asio::placeholders::error,
-					boost::asio::placeholders::bytes_transferred)));
+				[&](const boost::system::error_code &e, std::size_t b){
+					that->onRead(e, b);
+				}));
 	}
 
 	/**
@@ -78,6 +85,8 @@ public:
 	boost::asio::ip::tcp::socket& socket() { return _socket; }
 
 private:
+	using ptr = std::shared_ptr<SimpleConnection<Configuration, Request, Reply>>;
+
 	void onRead(const boost::system::error_code& e,
 			std::size_t bytes_transferred) {
 		if (!e) {
@@ -133,26 +142,26 @@ private:
 		logger::http.debugStream() <<
 				"SimpleConnection::readMore() More data to read...";
 
-		_socket.async_read_some(boost::asio::buffer(_buffer),
+		_socket.async_read_some(
+			boost::asio::buffer(_buffer),
 			_strand.wrap(
-				boost::bind(&SimpleConnection::onRead,
-					shared_from_this(),
-					boost::asio::placeholders::error,
-					boost::asio::placeholders::bytes_transferred)));
+				[&](const boost::system::error_code &e, std::size_t b){
+					that->onRead(e, b);
+				}));
 	}
 
 	void send() {
 		boost::asio::async_write(_socket, _reply.to_buffers(),
 			_strand.wrap(
-				boost::bind(
-					&SimpleConnection::onWrite,
-					shared_from_this(),
-					boost::asio::placeholders::error)));
+				[&](const boost::system::error_code &e, std::size_t b){
+					that->onWrite(e);
+				}));
 	}
 
 	boost::asio::io_service::strand _strand; /// Strand to ensure the connection's handlers are not called concurrently.
 	boost::asio::ip::tcp::socket _socket;
 
+	ptr				that;
 	Request 		_request;
 	Reply 			_reply;
 	RequestParser 	_requestParser;

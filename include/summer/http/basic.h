@@ -35,8 +35,20 @@ struct Header {
   std::string name;		//!< name of header
   std::string value;	//!< value (as string) of header
 
+  /// Default constructor
+  Header() {}
+
+  /// Convert a std::pair<string, string> into a Header
+  Header(const std::pair<std::string, std::string> &p) : name(p.first), value(p.second) {}
+
   /// An Header is checked by name
-  bool operator==(const std::string &name) const { return this->name == name; }
+  bool operator==(const std::string &name) const;
+
+  /// Convert a std::pair<string, string> into a Header
+  Header &operator=(const std::pair<std::string, std::string> &p);
+
+  /// A Header can be casted to a std::pair
+  operator std::pair<std::string, std::string>() const;
 };
 
 /// An HTTP Request.
@@ -94,7 +106,7 @@ struct Reply {
 		not_implemented = 501,
 		bad_gateway = 502,
 		service_unavailable = 503
-	} status;
+	} status;						//!< Http Status of the reply
 
 	std::vector<Header> headers;	//!< The headers to be included in the reply.
 	std::string content;			//!< The content
@@ -109,6 +121,11 @@ struct Reply {
 	static Reply stock_reply(status_type status);
 };
 
+/// Inject headers passed in reply.
+template<class Headers> Reply &operator<<(Reply &reply, const Headers &headers) {
+	for(auto h : headers) { reply.headers.push_back(Header(h)); }
+	return reply;
+}
 }}
 
 #endif // SUMMER_HTTP_BASIC_HTPP

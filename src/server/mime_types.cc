@@ -20,8 +20,11 @@ struct mapping {
 };
 
 std::string extension_to_type(const std::string& extension) {
+	std::string ext = extension;
+	if(!extension.empty()&&extension[0]=='.')
+		ext = extension.substr(1);
 	for (mapping* m = mappings; m->extension; ++m) {
-		if (m->extension == extension) {
+		if (m->extension == ext) {
 			return m->mime_type;
 		}
 	}

@@ -21,6 +21,11 @@ struct ApplicationNotFoundException : std::logic_error {
 		std::logic_error("Application named " + name + " not in registry.") {}
 };
 
+struct FileNotFoundException : std::logic_error {
+	FileNotFoundException(const std::string &file) :
+		std::logic_error("File " + file + " not found or not system permetions.") {}
+};
+
 struct NoControllerDefined : std::logic_error {
 	NoControllerDefined(const std::string &app, const std::string &resourcePath) :
 		std::logic_error("No Controller defined for resource " + resourcePath + " in application \"" + app + "\"") {}

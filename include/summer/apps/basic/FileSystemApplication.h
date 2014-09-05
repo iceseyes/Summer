@@ -9,9 +9,10 @@
 #define FILESYSTEMAPPLICATION_H_
 
 #include <summer/logger.h>
+#include <summer/mime_types.h>
+
 #include <summer/net/URL.h>
 #include <summer/apps/Application.h>
-#include <summer/mime_types.h>
 
 #include <boost/lexical_cast.hpp>
 
